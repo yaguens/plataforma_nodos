@@ -1,0 +1,1 @@
+# Plataforma de recepción de datos de nodos IoT
