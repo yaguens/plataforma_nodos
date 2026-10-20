@@ -1,0 +1,4 @@
+Copia aquí los logos con estos nombres exactos:
+  logo-upm.png       (logo de la Universidad Politécnica de Madrid)
+  logo-inictel.png   (logo de INICTEL-UNI)
+Son los mismos que tenías en la web anterior. Si no están, la web funciona igual (simplemente no se ven).

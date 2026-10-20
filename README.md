@@ -22,9 +22,14 @@ Laravel 13 (PHP 8.3+) con vistas Blade. Base de datos: SQLite en desarrollo y My
 | `app/Models/` | Un modelo por tabla y sus relaciones |
 | `app/Services/ProcesadorTramas.php` | La recepción de una trama: validar, evitar duplicados, guardar ciclo y lecturas |
 | `app/Http/Controllers/Api/MedidasController.php` | La API que llaman los nodos |
+| `app/Http/Controllers/PanelController.php` | El panel de inicio: una tarjeta por nodo, agrupadas por sitio |
+| `app/Http/Controllers/NodoController.php` | La vista de cada nodo: medidores y gráficas de 6 h, 24 h o 7 días |
 | `app/Http/Controllers/TramasController.php` | La página de comprobación `/tramas` |
+| `app/Services/Rangos.php` | Qué rango aplica a cada valor (el del sitio o el de su tipo) |
 | `routes/api.php`, `routes/web.php` | Qué dirección abre qué controlador |
-| `resources/views/` | Las páginas (Blade) |
+| `resources/views/` | Las páginas (Blade) y el componente `x-barra-valor` |
+| `public/js/graficas.js` | Medidores y gráficas (ECharts) |
+| `database/seeders/DemoSeeder.php` | Datos de demostración: 2 nodos con 24 h de tramas |
 | `config/plataforma.php` | Ajustes propios (desfase por defecto, zona horaria, límites) |
 | `tests/Feature/RecepcionTramasTest.php` | Pruebas automáticas del contrato con los nodos |
 
@@ -35,6 +40,7 @@ composer install
 cp .env.example .env        # solo la primera vez
 php artisan key:generate    # solo la primera vez
 php artisan migrate
-php artisan serve           # http://127.0.0.1:8000/tramas
+php artisan db:seed --class=DemoSeeder   # opcional: datos de demostración
+php artisan serve           # http://127.0.0.1:8000
 php artisan test            # pruebas automáticas
 ```

@@ -144,4 +144,28 @@ class RecepcionTramasTest extends TestCase
 
         $this->get('/tramas')->assertStatus(200)->assertSee('AC3D04');
     }
+
+    public function test_el_panel_muestra_el_nodo_y_sus_valores(): void
+    {
+        $this->postJson('/api/v1/medidas', $this->trama())->assertStatus(200);
+
+        $this->get('/')->assertStatus(200)
+            ->assertSee('AC3D04')
+            ->assertSee('Sin sitio asignado')
+            ->assertSee('8.82');
+    }
+
+    public function test_la_vista_del_nodo_se_muestra_en_cada_periodo(): void
+    {
+        $this->postJson('/api/v1/medidas', $this->trama())->assertStatus(200);
+        $this->postJson('/api/v1/medidas', $this->trama(['seq' => 217, 'OD_est' => 2, 'OD_OD_medida' => null, 'OD_temperatura' => null]))
+            ->assertStatus(200);
+        $nodo = Nodo::where('codigo', 'AC3D04')->firstOrFail();
+
+        foreach ([6, 24, 168] as $horas) {
+            $this->get('/nodos/' . $nodo->id . '?horas=' . $horas)->assertStatus(200)
+                ->assertSee('OD_OD_medida')
+                ->assertSee('id="grafica-', false);
+        }
+    }
 }

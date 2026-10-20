@@ -52,6 +52,25 @@ class Nodo extends Model
         return $this->hasMany(Lectura::class);
     }
 
+    // Estado de conexión: [texto, color de la etiqueta]
+    public function estado(): array
+    {
+        if (! $this->activo) {
+            return ['Desactivado', 'gris'];
+        }
+        if (! $this->ultima_conexion) {
+            return ['Nunca conectado', 'gris'];
+        }
+        $minutos = $this->ultima_conexion->diffInMinutes(now(), true);
+        if ($minutos <= config('plataforma.minutos_en_linea')) {
+            return ['En línea', 'verde'];
+        }
+        if ($minutos <= config('plataforma.horas_sin_conexion') * 60) {
+            return ['En silencio', 'ambar'];
+        }
+        return ['Sin conexión', 'rojo'];
+    }
+
     // Zona horaria con la que se muestran sus horas (la de su sitio o la de por defecto)
     public function zonaHoraria(): string
     {

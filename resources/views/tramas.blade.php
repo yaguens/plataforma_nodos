@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('titulo', 'Tramas recibidas · Plataforma de nodos')
+@section('titulo', 'Tramas y API')
 
 @section('contenido')
     @php
@@ -11,29 +11,46 @@
         $siguienteSeq = ($nodoPrueba?->ultimo_seq ?? 0) + 1;
     @endphp
 
-    <h1>Tramas recibidas</h1>
-    <p class="suave">Lo último que ha llegado a la API. Las horas se guardan en UTC y aquí se muestran en la hora del sitio de cada nodo
-        (sin sitio: {{ config('plataforma.zona_por_defecto') }}).</p>
+    <x-encabezado icono="ti-api" titulo="Tramas y API">
+        Lo último que ha llegado a la API. Horas en la zona del sitio de cada nodo (sin sitio: {{ config('plataforma.zona_por_defecto') }}).
+    </x-encabezado>
 
     <div class="resumen">
-        <div class="dato"><span class="cifra">{{ $nodos->count() }}</span><span class="txt">Nodos</span></div>
-        <div class="dato"><span class="cifra">{{ $enLinea }}</span><span class="txt">En línea (últimos {{ $minutos }} min)</span></div>
-        <div class="dato"><span class="cifra">{{ $ciclosHoy }}</span><span class="txt">Tramas en las últimas 24 h</span></div>
-        <div class="dato"><span class="cifra">{{ $pendientes->count() }}</span><span class="txt">Parámetros pendientes de revisar</span></div>
+        <div class="dato"><span class="circulo c-azul"><i class="ti ti-cpu"></i></span>
+            <div><span class="cifra">{{ $nodos->count() }}</span><span class="txt">Nodos</span></div></div>
+        <div class="dato"><span class="circulo c-verde"><i class="ti ti-wifi"></i></span>
+            <div><span class="cifra">{{ $enLinea }}</span><span class="txt">En línea (últimos {{ $minutos }} min)</span></div></div>
+        <div class="dato"><span class="circulo c-turquesa"><i class="ti ti-arrows-down-up"></i></span>
+            <div><span class="cifra">{{ $ciclosHoy }}</span><span class="txt">Tramas en las últimas 24 h</span></div></div>
+        <div class="dato"><span class="circulo c-ambar"><i class="ti ti-sparkles"></i></span>
+            <div><span class="cifra">{{ $pendientes->count() }}</span><span class="txt">Magnitudes nuevas por revisar</span></div></div>
     </div>
 
     @if ($pendientes->isNotEmpty())
-        <div class="panel">
-            <strong>Claves nuevas guardadas como parámetros pendientes:</strong>
+        <div class="aviso-caja">
+            <i class="ti ti-sparkles"></i> <strong>Claves nuevas guardadas como pendientes:</strong>
             @foreach ($pendientes as $p) <span class="codigo">{{ $p }}</span> @endforeach
         </div>
     @endif
 
+    {{-- Direcciones de la API --}}
+    <div class="panel">
+        <div class="panel-titulo"><h2><i class="ti ti-world"></i> Direcciones de la API (v1)</h2></div>
+        <table>
+            <tbody>
+                <tr><td>En directo · una trama por ciclo</td><td><span class="codigo">POST {{ url('/api/v1/medidas') }}</span></td></tr>
+                <tr><td>Reenvío en lote · array de tramas</td><td><span class="codigo">POST {{ url('/api/v1/medidas/lote') }}</span></td></tr>
+            </tbody>
+        </table>
+        <p class="nota">Cabecera <span class="codigo">Content-Type: application/json</span>. Respuestas: 200 guardado (o ya estaba) · 400 mal formada ·
+            403 nodo desactivado · 409 mismo seq con otro contenido · 500 error del servidor (el nodo reintenta). Detalle en <span class="codigo">docs/contrato_api.md</span>.</p>
+    </div>
+
     {{-- Últimas tramas --}}
     <div class="panel">
-        <h2>Últimas tramas ({{ $ciclos->count() }})</h2>
+        <div class="panel-titulo"><h2><i class="ti ti-list"></i> Últimas tramas ({{ $ciclos->count() }})</h2></div>
         @if ($ciclos->isEmpty())
-            <div class="vacio">Todavía no ha llegado ninguna trama. Prueba con el formulario de abajo.</div>
+            <div class="vacio"><i class="ti ti-inbox"></i>Todavía no ha llegado ninguna trama. Prueba con el formulario de abajo.</div>
         @else
             <div class="tabla-scroll">
                 <table>
@@ -45,7 +62,7 @@
                             <tr>
                                 <td>{{ $local($c->medido_en, $c->nodo) ?? 'sin hora' }}</td>
                                 <td class="suave">{{ $hace($c->recibido_en) }}</td>
-                                <td><span class="codigo">{{ $c->nodo->codigo }}</span>
+                                <td><a href="{{ route('nodos.show', $c->nodo) }}"><span class="codigo">{{ $c->nodo->codigo }}</span></a>
                                     @if ($c->via) <span class="suave">vía {{ $c->via->codigo }}</span> @endif</td>
                                 <td>{{ $c->seq ?? '—' }}</td>
                                 <td><span class="pill {{ $c->origen === 'red' ? 'azul' : 'ambar' }}">{{ $c->origen }}</span></td>
@@ -67,9 +84,9 @@
     <div class="dos-columnas">
         {{-- Nodos --}}
         <div class="panel">
-            <h2>Nodos</h2>
+            <div class="panel-titulo"><h2><i class="ti ti-cpu"></i> Nodos</h2></div>
             @if ($nodos->isEmpty())
-                <div class="vacio">Los nodos aparecen solos al enviar su primera trama.</div>
+                <div class="vacio"><i class="ti ti-antenna-bars-off"></i>Los nodos aparecen solos al enviar su primera trama.</div>
             @else
                 <table>
                     <thead><tr><th>Código</th><th>Sitio</th><th>Último contacto</th><th>Estado</th></tr></thead>
@@ -79,7 +96,7 @@
                                 $enLineaNodo = $n->ultima_conexion && $n->ultima_conexion->gte(now()->utc()->subMinutes($minutos));
                             @endphp
                             <tr>
-                                <td><span class="codigo">{{ $n->codigo }}</span><br><span class="suave">{{ $n->nombre }}</span></td>
+                                <td><a href="{{ route('nodos.show', $n) }}"><span class="codigo">{{ $n->codigo }}</span></a><br><span class="suave">{{ $n->nombre }}</span></td>
                                 <td>{{ $n->sitio?->nombre ?? 'Sin sitio' }}</td>
                                 <td class="suave">{{ $hace($n->ultima_conexion) }}</td>
                                 <td>
@@ -97,9 +114,9 @@
 
         {{-- Incidencias --}}
         <div class="panel">
-            <h2>Últimas incidencias</h2>
+            <div class="panel-titulo"><h2><i class="ti ti-alert-triangle"></i> Últimas incidencias</h2></div>
             @if ($incidencias->isEmpty())
-                <div class="vacio">Ninguna trama rechazada ni en conflicto.</div>
+                <div class="vacio"><i class="ti ti-circle-check"></i>Ninguna trama rechazada ni en conflicto.</div>
             @else
                 <table>
                     <thead><tr><th>Recibida</th><th>Tipo</th><th>Nodo · seq</th><th>Motivo</th></tr></thead>
@@ -120,18 +137,18 @@
 
     {{-- Probar la API --}}
     <div class="panel">
-        <h2>Probar la API</h2>
-        <p class="suave">Envía una trama como las de los nodos, con el nodo de pruebas <span class="codigo">FFFFFF</span>.
-            Dirección: <span class="codigo">POST {{ url('/api/v1/medidas') }}</span></p>
+        <div class="panel-titulo"><h2><i class="ti ti-send"></i> Probar la API</h2></div>
+        <p class="suave" style="margin-top:0">Envía una trama como las de los nodos, con el nodo de pruebas <span class="codigo">FFFFFF</span>.</p>
         <textarea id="trama"></textarea>
         <div class="fila">
-            <button class="btn" id="enviar">Enviar a la API</button>
-            <button class="btn secundario" id="otra">Generar otra trama</button>
+            <button class="btn" id="enviar"><i class="ti ti-send"></i> Enviar a la API</button>
+            <button class="btn secundario" id="otra"><i class="ti ti-refresh"></i> Generar otra trama</button>
             <span class="suave">Repite el envío sin cambiar nada → 200 (no se duplica) · cambia un valor sin cambiar el seq → 409</span>
         </div>
         <div id="respuesta"></div>
     </div>
 
+    @push('scripts')
     <script>
         let seq = {{ $siguienteSeq }};
         const caja = document.getElementById('trama');
@@ -170,4 +187,5 @@
 
         nuevaTrama();
     </script>
+    @endpush
 @endsection
