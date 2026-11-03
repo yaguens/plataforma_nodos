@@ -43,7 +43,10 @@
             <a href="{{ route('proyectos.index') }}" class="{{ request()->routeIs('proyectos.*') ? 'activo' : '' }}">
                 <i class="ti ti-folders"></i> Proyectos
             </a>
-            <a href="{{ route('parametros.index') }}" class="{{ request()->routeIs('parametros.*') ? 'activo' : '' }}">
+            <a href="{{ route('sitios.index') }}" class="{{ request()->routeIs('sitios.*') ? 'activo' : '' }}">
+                <i class="ti ti-map-pin"></i> Sitios
+            </a>
+            <a href="{{ route('parametros.index') }}" class="{{ request()->routeIs('parametros.*', 'parametros.rangos.*', 'rangos.*') ? 'activo' : '' }}">
                 <i class="ti ti-adjustments-horizontal"></i> Parámetros y rangos
             </a>
             <span class="proximo"><i class="ti ti-cpu"></i> Nodos y sondas <span class="etiqueta">pronto</span></span>

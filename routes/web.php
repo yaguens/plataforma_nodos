@@ -7,6 +7,7 @@ use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\TramasController;
 use App\Http\Controllers\RangoController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SitioController;
 
 // Páginas de la web (las que ven las personas)
 
@@ -21,3 +22,5 @@ Route::resource('proyectos', ProyectoController::class)->except(['show']);
 Route::resource('parametros', ParametroController::class)->only(['index', 'edit', 'update']);
 
 Route::resource('parametros.rangos', RangoController::class)->shallow()->except(['index', 'show']);
+
+Route::resource('sitios', SitioController::class)->except(['show']);
