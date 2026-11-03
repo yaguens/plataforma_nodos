@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 //   {"formato":1, "nodo":"AC3D04", "seq":216, "ts":1790870346, "rtc":1,
 //    "OD_est":1, "OD_OD_medida":8.82, "OD_temperatura":25.6}
 //
-// procesar() devuelve el código HTTP que se responde al nodo (mismo contrato que la web anterior):
+// procesar() devuelve el código HTTP que se responde al nodo:
 //   200 guardada, o ya estaba guardada (el nodo no debe reenviarla)
 //   400 no se puede guardar (falta nodo, seq, ts o rtc, o no son del tipo correcto)
 //   403 el nodo está desactivado en la plataforma
@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\DB;
 //   500 fallo del servidor: el nodo lo reintentará más tarde
 //
 // Regla: rechazar solo lo que no se puede guardar; todo lo demás se guarda y se marca.
-// Las horas se guardan en UTC: ts (hora local del nodo) − desfase del nodo.
+// Las horas se guardan en UTC: ts (hora local del nodo) − desfase del nodo(según su ubicación: Lima -5h, Guatemala -6h).
 // ═════════════════════════════════════════════
 class ProcesadorTramas
 {
@@ -87,20 +87,20 @@ class ProcesadorTramas
         }
 
         // ───── 2. El nodo (si es la primera vez que envía, se da de alta solo, sin sitio) ─────
-        try {
+        try { // buscar o crear el nodo
             $nodo = Nodo::firstOrCreate(
-                ['codigo' => $codigo],
-                [
+                ['codigo' => $codigo],  // con qué buscar
+                [ // qué valores poner si no existía
                     'nombre' => $codigo === 'SINID' ? 'Nodo sin identificador (SINID)' : 'Nodo ' . $codigo,
                     'descripcion' => 'Dado de alta automáticamente al recibir su primera trama',
                     'desfase_s' => config('plataforma.desfase_por_defecto'),
                 ]
             );
-            if ($nodo->wasRecentlyCreated) {
+            if ($nodo->wasRecentlyCreated) { //true si firstOrCreate acaba de crear el nodo, y false si ya existía. 
                 $nodo->refresh();   // trae los valores por defecto de la tabla (activo = sí, rol...)
             }
-        } catch (QueryException $e) {
-            return $this->error($seq);
+        } catch (QueryException $e) {  // si la base de datos falla
+            return $this->error($seq);   // responde 500
         }
         if (! $nodo->activo) {
             return $this->rechazar(403, 'El nodo está desactivado en la plataforma', $codigo, $seq, $origen, $cuerpo, $nodo->id);

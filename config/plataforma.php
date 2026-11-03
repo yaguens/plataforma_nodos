@@ -23,7 +23,7 @@ return [
     'max_tramas_lote' => 500,
 
     // Un nodo está "en línea" si ha enviado algo en estos minutos; "sin conexión" pasadas estas horas
-    'minutos_en_linea' => 30,
+    'minutos_en_linea' => 25,
     'horas_sin_conexion' => 24,
 
     // Códigos de estado de los sensores (<fuente>_est). Nunca cambian de significado; los nuevos van al final.

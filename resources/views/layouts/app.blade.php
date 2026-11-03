@@ -40,8 +40,12 @@
             </a>
 
             <div class="seccion">Configuración</div>
-            <span class="proximo"><i class="ti ti-map-pin"></i> Proyectos y sitios <span class="etiqueta">pronto</span></span>
-            <span class="proximo"><i class="ti ti-adjustments-horizontal"></i> Parámetros y rangos <span class="etiqueta">pronto</span></span>
+            <a href="{{ route('proyectos.index') }}" class="{{ request()->routeIs('proyectos.*') ? 'activo' : '' }}">
+                <i class="ti ti-folders"></i> Proyectos
+            </a>
+            <a href="{{ route('parametros.index') }}" class="{{ request()->routeIs('parametros.*') ? 'activo' : '' }}">
+                <i class="ti ti-adjustments-horizontal"></i> Parámetros y rangos
+            </a>
             <span class="proximo"><i class="ti ti-cpu"></i> Nodos y sondas <span class="etiqueta">pronto</span></span>
         </nav>
 

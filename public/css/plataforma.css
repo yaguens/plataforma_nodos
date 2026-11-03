@@ -283,3 +283,40 @@ textarea { width: 100%; min-height: 160px; font-family: Consolas, monospace; fon
     .pagina { padding: 20px 16px 50px; }
     .tarjetas { grid-template-columns: 1fr; }
 }
+
+/* ───── Formularios (configuración) ───── */
+.formulario { display: grid; gap: 18px; max-width: 640px; }
+.campo label { display: block; font-weight: 600; margin-bottom: 6px; }
+.campo input[type="text"],
+.campo select {
+    width: 100%; font: inherit; color: var(--texto);
+    background: var(--blanco); border: 1px solid var(--borde); border-radius: 10px;
+    padding: 9px 12px;
+}
+.campo input:focus,
+.campo select:focus {
+    outline: none; border-color: var(--primario);
+    box-shadow: 0 0 0 3px var(--primario-suave);
+}
+.campo.con-error input,
+.campo.con-error select { border-color: var(--rojo); }
+.error-campo { display: block; color: var(--rojo); font-size: 12.5px; margin-top: 5px; }
+.acciones-formulario { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+
+.btn.peligro { background: var(--rojo); }
+.btn.peligro:hover { background: #be123c; }
+.aviso-caja.error { background: var(--rojo-suave); color: #be123c; }
+
+/* Campos numéricos, varios campos en una fila, casillas y textos de ayuda */
+.campo input[type="number"] {
+    width: 100%; font: inherit; color: var(--texto);
+    background: var(--blanco); border: 1px solid var(--borde); border-radius: 10px;
+    padding: 9px 12px;
+}
+.campo.con-error input[type="number"] { border-color: var(--rojo); }
+.fila-campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; }
+.campo-check { display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; }
+.campo-check input { width: 16px; height: 16px; accent-color: var(--primario); }
+.ayuda { display: block; color: var(--texto-suave); font-size: 12.5px; margin-top: 5px; }
+
+.opciones-radio { display: flex; gap: 22px; flex-wrap: wrap; }
