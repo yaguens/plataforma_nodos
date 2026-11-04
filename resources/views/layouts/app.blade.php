@@ -29,7 +29,7 @@
 
         <nav class="menu">
             <div class="seccion">Monitorización</div>
-            <a href="{{ route('panel') }}" class="{{ request()->routeIs('panel', 'nodos.*') ? 'activo' : '' }}">
+            <a href="{{ route('panel') }}" class="{{ request()->routeIs('panel', 'nodos.show') ? 'activo' : '' }}">
                 <i class="ti ti-layout-dashboard"></i> Panel de nodos
             </a>
             <span class="proximo"><i class="ti ti-chart-line"></i> Historial y exportación <span class="etiqueta">pronto</span></span>
@@ -46,10 +46,12 @@
             <a href="{{ route('sitios.index') }}" class="{{ request()->routeIs('sitios.*') ? 'activo' : '' }}">
                 <i class="ti ti-map-pin"></i> Sitios
             </a>
+            <a href="{{ route('nodos.index') }}" class="{{ request()->routeIs('nodos.index', 'nodos.edit') ? 'activo' : '' }}">
+                <i class="ti ti-cpu"></i> Nodos
+            </a>
             <a href="{{ route('parametros.index') }}" class="{{ request()->routeIs('parametros.*', 'parametros.rangos.*', 'rangos.*') ? 'activo' : '' }}">
                 <i class="ti ti-adjustments-horizontal"></i> Parámetros y rangos
             </a>
-            <span class="proximo"><i class="ti ti-cpu"></i> Nodos y sondas <span class="etiqueta">pronto</span></span>
         </nav>
 
         {{-- Logos: copia los archivos en public/img/ con estos nombres --}}

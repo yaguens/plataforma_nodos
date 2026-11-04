@@ -76,4 +76,12 @@ class Nodo extends Model
     {
         return $this->sitio?->zona_horaria ?? config('plataforma.zona_por_defecto');
     }
+
+    // Desfase en texto para mostrarlo: "UTC−5 h", "UTC+1 h", "UTC−5.5 h"
+    public function desfaseTexto(): string
+    {
+        $horas = $this->desfase_s / 3600;
+
+        return 'UTC' . ($horas < 0 ? '−' : '+') . abs($horas) . ' h';
+    }
 }

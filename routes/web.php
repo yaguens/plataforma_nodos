@@ -13,7 +13,8 @@ use App\Http\Controllers\SitioController;
 
 Route::get('/', [PanelController::class, 'index'])->name('panel');
 
-Route::get('/nodos/{nodo}', [NodoController::class, 'show'])->name('nodos.show');
+// Route::get('/nodos/{nodo}', [NodoController::class, 'show'])->name('nodos.show');
+Route::resource('nodos', NodoController::class)->only(['index', 'show', 'edit', 'update']);
 
 Route::get('/tramas', [TramasController::class, 'index'])->name('tramas');
 

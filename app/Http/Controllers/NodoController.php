@@ -2,25 +2,82 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NodoRequest;
 use App\Models\Lectura;
 use App\Models\Nodo;
 use App\Models\Parametro;
+use App\Models\Sitio;
 use App\Services\Rangos;
 use Carbon\CarbonInterface;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 // ═════════════════════════════════════════════
-// VISTA DEL NODO · cómo está un nodo AHORA (medidores) y sus últimas horas (gráficas).
-//   /nodos/3            → últimas 24 h
-//   /nodos/3?horas=6    → últimas 6 h (también 24 y 168 = 7 días)
-// Los parámetros con "mostrar como medidor" salen como gauge; el resto, como número con barrita.
+// NODOS
+//   GET  /nodos                 index    listado de configuración
+//   GET  /nodos/3               show     medidores y gráficas (monitorización)
+//   GET  /nodos/3?horas=6       show     últimas 6 h (también 24 y 168 = 7 días)
+//   GET  /nodos/3/edit          edit     configurar: sitio, nombre, rol, desfase, activo
+//   PUT  /nodos/3               update   guardar la configuración
+// No se crean ni se borran desde aquí: se dan de alta solos con su primera trama
+// y, si dejan de interesar, se desactivan (la API les responde 403).
+//
+// En show: los parámetros con "mostrar como medidor" salen como gauge; el resto, como número con barrita.
 // Un dato con más de "minutos_en_linea" sale en gris: ya no representa el estado actual.
 // Las horas se guardan en UTC y aquí se muestran en la zona horaria del sitio del nodo.
 // ═════════════════════════════════════════════
 class NodoController extends Controller
 {
     public const PERIODOS = [6 => '6 h', 24 => '24 h', 168 => '7 días'];
+
+    // ───── Configuración ─────
+
+    public function index(): View
+    {
+        $nodos = Nodo::with('sitio.proyecto')
+            ->orderByRaw('sitio_id IS NOT NULL')   // los que no tienen sitio, primero
+            ->orderBy('codigo')
+            ->get();
+
+        return view('nodos.index', compact('nodos'));
+    }
+
+    public function edit(Nodo $nodo): View
+    {
+        $nodo->load('sitio.proyecto', 'maestro');
+
+        $sitios = Sitio::with('proyecto')->orderBy('nombre')->get();
+
+        return view('nodos.edit', [
+            'nodo' => $nodo,
+            'sitios' => $sitios,
+            // Desfase actual de la zona de cada sitio (en horas), para sugerirlo en el formulario
+            'desfasesSitios' => $sitios->mapWithKeys(fn (Sitio $s) => [
+                $s->id => now()->setTimezone($s->zona_horaria)->utcOffset() / 60,
+            ]),
+            'maestros' => Nodo::where('rol', 'maestro')->where('id', '!=', $nodo->id)->orderBy('codigo')->get(),
+        ]);
+    }
+
+    public function update(NodoRequest $request, Nodo $nodo): RedirectResponse
+    {
+        $d = $request->validated();
+
+        $nodo->update([
+            'nombre' => $d['nombre'],
+            'sitio_id' => $d['sitio_id'] ?? null,
+            'rol' => $d['rol'],
+            'maestro_id' => $d['rol'] === 'esclavo' ? $d['maestro_id'] : null,
+            'desfase_s' => (int) round($d['desfase_horas'] * 3600),   // el formulario va en horas; la tabla, en segundos
+            'activo' => $d['activo'],
+            'descripcion' => $d['descripcion'] ?? null,
+        ]);
+
+        return redirect()->route('nodos.index')->with('ok', 'Nodo «' . $nodo->nombre . '» actualizado.');
+    }
+
+    // ───── Monitorización ─────
 
     public function show(Request $request, Nodo $nodo, Rangos $rangos): View
     {
