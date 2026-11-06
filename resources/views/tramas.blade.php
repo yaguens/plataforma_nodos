@@ -12,7 +12,7 @@
     @endphp
 
     <x-encabezado icono="ti-api" titulo="Tramas y API">
-        Lo último que ha llegado a la API. Horas en la zona del sitio de cada nodo (sin sitio: {{ config('plataforma.zona_por_defecto') }}).
+        Lo último que ha llegado a la API. Horas en la zona del sitio de cada nodo. (Por defecto: {{ config('plataforma.zona_por_defecto') }}).
     </x-encabezado>
 
     <div class="resumen">

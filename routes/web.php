@@ -25,3 +25,6 @@ Route::resource('parametros', ParametroController::class)->only(['index', 'edit'
 Route::resource('parametros.rangos', RangoController::class)->shallow()->except(['index', 'show']);
 
 Route::resource('sitios', SitioController::class)->except(['show']);
+
+// Adicionalmente, algunas rutas para páginas estáticas como "acerca de" o "contacto" 
+Route::view('/acerca', 'acerca')->name('acerca');

@@ -15,6 +15,9 @@ use Illuminate\View\View;
 // PANEL · estado de cada nodo de un vistazo, agrupados por sitio.
 // Es la forma de saber, sin ir al campo, que un nodo o un sensor ha dejado de funcionar.
 // Todo se calcula con lo que ya llega en las tramas.
+// - Funcionmiento: se hace una consulta por cada nodo, y otra por cada lectura del último ciclo de cada nodo. Luego se calcula el estado de cada nodo y de sus sensores, y se agrupan por sitio.
+// Primera parte: cuatro consultas ($nodos, $ultimos, $lecturas, $conflictos...)
+// Después: calcula el estado, los sensores y los avisos de ESTE nodo
 // ═════════════════════════════════════════════
 class PanelController extends Controller
 {
@@ -97,7 +100,7 @@ class PanelController extends Controller
 
             usort($avisos, fn ($a, $b) => $b[0] <=> $a[0]);
 
-            return [
+            return [ // devuelve UNA tarjeta
                 'nodo' => $nodo,
                 'estado' => $estado,
                 'color' => $color,
@@ -109,7 +112,8 @@ class PanelController extends Controller
                 'grupo' => $nodo->sitio ? $nodo->sitio->proyecto->nombre . ' · ' . $nodo->sitio->nombre : 'Sin sitio asignado',
             ];
         });
-
+        //dd($tarjetas->first());
+        // Ordena y agrupa las tarjetas por proyecto y sitio, y dentro de cada grupo por gravedad y código de nodo
         // Grupos por sitio (los nodos sin sitio, al final) y, dentro, los más graves primero
         $grupos = $tarjetas->sortBy([['gravedad', 'desc'], fn ($a, $b) => strcmp($a['nodo']->codigo, $b['nodo']->codigo)])
             ->groupBy('grupo')

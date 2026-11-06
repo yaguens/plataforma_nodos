@@ -52,6 +52,11 @@
             <a href="{{ route('parametros.index') }}" class="{{ request()->routeIs('parametros.*', 'parametros.rangos.*', 'rangos.*') ? 'activo' : '' }}">
                 <i class="ti ti-adjustments-horizontal"></i> Parámetros y rangos
             </a>
+
+            <div class="seccion">Información</div>
+            <a href="{{ route('acerca') }}" class="{{ request()->routeIs('acerca') ? 'activo' : '' }}">
+                <i class="ti ti-info-circle"></i> Acerca de la plataforma
+            </a>
         </nav>
 
         {{-- Logos: copia los archivos en public/img/ con estos nombres --}}
