@@ -27,33 +27,36 @@ class Nodo extends Model
         'primer_contacto' => 'datetime',
     ];
 
-    public function sitio(): BelongsTo
+    public function sitio(): BelongsTo  // un nodo pertenece a un sitio
     {
         return $this->belongsTo(Sitio::class);
     }
 
-    public function maestro(): BelongsTo
+    public function maestro(): BelongsTo // un nodo puede pertenecer a un nodo maestro
     {
         return $this->belongsTo(Nodo::class, 'maestro_id');
     }
 
-    public function sondas(): HasMany
+    public function sondas(): HasMany // un nodo puede tener muchas sondas
     {
         return $this->hasMany(Sonda::class);
     }
 
-    public function ciclos(): HasMany
+    public function ciclos(): HasMany // un nodo puede tener muchos ciclos
     {
         return $this->hasMany(Ciclo::class);
     }
 
-    public function lecturas(): HasMany
+    public function lecturas(): HasMany // un nodo puede tener muchas lecturas
     {
         return $this->hasMany(Lectura::class);
     }
 
+    // ***** Métodos propios para obtener información derivada de los atributos del modelo
+    // ***** Lógica que pertenece al nodo y que se reutiliza en el panel, el listado y la página del nodo.
+
     // Estado de conexión: [texto, color de la etiqueta]
-    public function estado(): array
+    public function estado(): array 
     {
         if (! $this->activo) {
             return ['Desactivado', 'gris'];

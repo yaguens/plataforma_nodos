@@ -46,7 +46,7 @@ class PanelController extends Controller
             [$estado, $color] = $nodo->estado();
             $ciclo = $ultimos->get($nodo->id);
             $apagado = $estado !== 'En línea';
-            $avisos = [];   // [nivel, texto] · nivel: 3 rojo · 2 ámbar · 1 gris
+            $avisos = [];   // par [nivel, texto] · nivel: 3 rojo · 2 ámbar · 1 gris
 
             if ($estado === 'En silencio') {
                 $avisos[] = [2, 'En silencio: sin datos ' . $nodo->ultima_conexion->locale('es')->diffForHumans()];
@@ -98,7 +98,7 @@ class PanelController extends Controller
                 }
             }
 
-            usort($avisos, fn ($a, $b) => $b[0] <=> $a[0]);
+            usort($avisos, fn ($a, $b) => $b[0] <=> $a[0]); // ordena los avisos de mayor a menor nivel
 
             return [ // devuelve UNA tarjeta
                 'nodo' => $nodo,
@@ -108,7 +108,7 @@ class PanelController extends Controller
                 'apagado' => $apagado,
                 'sensores' => $sensores,
                 'avisos' => $avisos,
-                'gravedad' => $avisos ? $avisos[0][0] : 0,
+                'gravedad' => $avisos ? $avisos[0][0] : 0, // $avisos[0] es el más grave, y $avisos[0][0] es su nivel.
                 'grupo' => $nodo->sitio ? $nodo->sitio->proyecto->nombre . ' · ' . $nodo->sitio->nombre : 'Sin sitio asignado',
             ];
         });
