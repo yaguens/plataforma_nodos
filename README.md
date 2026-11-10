@@ -4,7 +4,7 @@ Plataforma web que recibe, guarda y muestra los datos de nodos IoT modulares
 (ESP32 / LilyGO con sondas por RS485) instalados en distintos sitios: Guatemala (lago Atitlán y PTAR),
 laboratorio de Lima y laboratorio de Madrid.
 
-- **Modular:** cada sensor llega como `<fuente>_<magnitud>` (`OD_OD_medida`, `pH_pH`...). Una clave nueva
+- **Modular:** cada sensor llega como `<fuente>_<magnitud>` (`OD_temperatura`, `PH_ph`...). Una clave nueva
   se da de alta sola como parámetro pendiente: no hay que tocar ni el firmware ni las tablas.
 - **Contrato estable con los nodos:** ver [docs/contrato_api.md](docs/contrato_api.md).
 - **Horas en UTC** en la base de datos; la web las muestra en la hora de cada sitio.

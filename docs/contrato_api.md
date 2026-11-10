@@ -17,8 +17,6 @@ La cabecera `X-API-Key` se acepta pero todavía no se comprueba.
  "OD_est":1,"OD_oxigeno":8.82,"OD_temperatura":25.6}
 ```
 
-(Las claves de las medidas de este ejemplo están pendientes de confirmar con Gonzalo.)
-
 | Campo | Obligatorio | Significado |
 | --- | --- | --- |
 | `nodo` | Sí | 3 últimos bytes de la MAC en hexadecimal (`AC3D04`) o `SINID` |
@@ -58,17 +56,20 @@ de escribir una magnitud se convierte en una magnitud distinta**: `OD_temperatur
 ### Claves en uso
 
 Antes de programar una clave nueva en el firmware, se añade a esta tabla para que todos los
-módulos usen la misma. Algunos posibles ejemplos:
+módulos usen la misma.
 
 | Clave | Magnitud | Unidad | Escala del sensor | Módulos | Estado |
 | --- | --- | --- | --- | --- | --- |
-| `OD_oxigeno` | Oxígeno disuelto medido por el sensor de OD | mg/L | — | M1–M6 | Pendiente de confirmar |
-| `OD_temperatura` | Temperatura del agua medida por el sensor de OD | °C | — | M1–M6 | Pendiente de confirmar |
-| `PH_ph` | pH medido por el sensor de pH | — (sin unidad) | 0–14 | M1, M2, M7 | Pendiente de confirmar |
-| `PH_temperatura` | Temperatura del agua medida por el sensor de pH | °C | — | M1, M2, M7 | Pendiente de confirmar |
+| `OD_oxigeno` | Oxígeno disuelto medido por el sensor de OD | mg/L | — | M1–M6, Lima (pruebas) | Confirmada |
+| `OD_temperatura` | Temperatura del agua medida por el sensor de OD | °C | — | M1–M6, Lima (pruebas) | Confirmada |
+| `PH_ph` | pH medido por el sensor de pH | — (sin unidad) | 0–14 | M1, M2, M7, Lima (pruebas) | Confirmada |
+| `PH_temperatura` | Temperatura del agua medida por el sensor de pH | °C | — | M1, M2, M7, Lima (pruebas) | Confirmada |
 | `COND_conductividad` | Conductividad eléctrica medida por el sensor de conductividad | µS/cm | — | M1, M2 | Pendiente de confirmar |
 | `COND_temperatura` | Temperatura del agua medida por el sensor de conductividad | °C | — | M1, M2 | Pendiente de confirmar |
 | `TURB_turbidez` | Turbidez medida por el sensor de turbidez | NTU | — | M1, M2 | Pendiente de confirmar |
+| `NPK_nitrogeno` | Nitrógeno medido por el sensor NPK (suelo) | mg/kg | — | Lima (pruebas) | Solo pruebas |
+| `NPK_fosforo` | Fósforo medido por el sensor NPK (suelo) | mg/kg | — | Lima (pruebas) | Solo pruebas |
+| `NPK_potasio` | Potasio medido por el sensor NPK (suelo) | mg/kg | — | Lima (pruebas) | Solo pruebas |
 
 Módulos:
 
